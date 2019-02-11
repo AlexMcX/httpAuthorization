@@ -4,19 +4,18 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { User } from '../_models/user';
 import { map } from 'rxjs/operators';
 
-
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
+    private TOKEN = 'token';
     private BASE_URL = 'http://localhost:4201/';
 
     private currentUserSubject: BehaviorSubject<User>;
     public currentUser: Observable<User>;
+    public isRememberMe = false;
 
     constructor(private http: HttpClient) {
         // this.currentUserSubject = new BehaviorSubject<User>(localStorage.getItem('token')));
         // this.currentUser = this.currentUserSubject.asObservable();
-
-        
     }
 
     public get currentUserValue(): User {
@@ -37,7 +36,7 @@ export class AuthenticationService {
             .then(response => {
                     if (response.status === 200) {
                         response = JSON.parse(JSON.stringify(response.body));
-                        
+
                         if (response['result'] === true) {
                             this.loginSuccess(response['uuid']);
                         }
@@ -50,22 +49,14 @@ export class AuthenticationService {
         });
 
         return prm;
-          
-        // return this.http.post<any>(`/users/authenticate`, { username, password })
-        //     .pipe(map(user => {
-        //         // login successful if there's a jwt token in the response
-        //         if (user && user.token) {
-        //             // store user details and jwt token in local storage to keep user logged in between page refreshes
-                    // localStorage.setItem('currentUser', JSON.stringify(user));
-        //             this.currentUserSubject.next(user);
-        //         }
-
-        //         return user;
-        //     }));
     }
 
     init() {
-        let uuid = localStorage.getItem('token');
+        let uuid = sessionStorage.getItem(this.TOKEN);
+
+        uuid = uuid == null ? localStorage.getItem(this.TOKEN) : uuid;
+
+        console.log(sessionStorage.getItem(this.TOKEN), localStorage.getItem(this.TOKEN));
 
         if (uuid != null) {
             this.login('', '', uuid);
@@ -90,6 +81,12 @@ export class AuthenticationService {
             toPromise().then (response => {
                 if (response.status === 200) {
                     response = JSON.parse(JSON.stringify(response.body));
+
+                    console.log(response);
+
+                    if (response['result'] === true) {
+                        this.loginSuccess(response['uuid']);
+                    }
 
                     resolve(response);
                 }
@@ -119,7 +116,9 @@ export class AuthenticationService {
                     response = JSON.parse(JSON.stringify(response.body));
 
                      // remove user from local storage to log user out
-                    localStorage.removeItem('token');
+                    localStorage.removeItem(this.TOKEN);
+
+                    sessionStorage.removeItem(this.TOKEN);
 
                     this.currentUserValue.uuid = undefined;
 
@@ -133,16 +132,17 @@ export class AuthenticationService {
         });
 
         return prm;
-
-
-       
     }
 
     private loginSuccess(uuid: string) {
-        localStorage.setItem('token', uuid);
-        
+        if (this.isRememberMe) {
+            localStorage.setItem(this.TOKEN, uuid);
+        }
+
+        sessionStorage.setItem(this.TOKEN, uuid);
+
         this.currentUserValue.uuid = uuid;
 
-        this.currentUserSubject.next(this.currentUserValue.uuid !== ''? this.currentUserValue : null);
+        this.currentUserSubject.next(this.currentUserValue.uuid !== '' ? this.currentUserValue : null);
     }
 }

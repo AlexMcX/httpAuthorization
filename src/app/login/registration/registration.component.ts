@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from 'src/app/_services/authentication';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-registration',
@@ -15,6 +16,7 @@ export class RegistrationComponent implements OnInit {
 
   constructor(
         private formBuilder: FormBuilder,
+        private router: Router,
         private authenticationService: AuthenticationService
   ) { }
 
@@ -42,11 +44,13 @@ export class RegistrationComponent implements OnInit {
       response => {
           if (response['result'] === false) {
               this.error = response['message'] as string;
+          } else {
+            this.router.navigate(['/home']);
           }
+
           this.loading = false;
       });
 
       this.loading = false;
   }
-
 }

@@ -8,7 +8,7 @@ import { RegistrationComponent } from './login/registration/registration.compone
 const routes: Routes = [
   { path: 'home', component: HomeComponent},
   { path: 'login', component: LoginComponent},
-  { path: 'auth', component: RegistrationComponent},
+  { path: 'reg', component: RegistrationComponent},
   { path: '', redirectTo: '/home', pathMatch: 'full'},
   { path: '**', component: PageNotFoundComponent}
 ];

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from 'src/app/_services/authentication';
@@ -58,5 +58,13 @@ export class LoginComponent implements OnInit {
 
                 this.loading = false;
             });
+    }
+
+    onRegister() {
+        this.router.navigate(['/reg']);
+    }
+
+    toggleIsRemember(value: any) {
+        this.authenticationService.isRememberMe = value.target.checked;
     }
 }
