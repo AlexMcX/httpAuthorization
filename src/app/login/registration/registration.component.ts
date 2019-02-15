@@ -24,7 +24,10 @@ export class RegistrationComponent implements OnInit {
     this.loginForm = this.formBuilder.group({
       email: ['', Validators.required],
       password: ['', Validators.required],
-      confirm:  ['', Validators.required]
+      confirmPassword:  ['', Validators.required],
+      firstName:  ['', Validators.required],
+      lastName:  ['', Validators.required],
+      nickName:  ['', Validators.required]
   });
   }
 
@@ -32,7 +35,7 @@ export class RegistrationComponent implements OnInit {
   get f() { return this.loginForm.controls; }
 
   onAuth() {
-    if (this.f.password.value !== this.f.confirm.value) {
+    if (this.f.password.value !== this.f.confirmPassword.value) {
         this.error = 'Passwords do not match, try again';
 
         return;
@@ -40,7 +43,7 @@ export class RegistrationComponent implements OnInit {
 
     this.error = '';
 
-    this.authenticationService.registration(this.f.email.value, this.f.password.value).then(
+    this.authenticationService.registration(this.f).then(
       response => {
           if (response['result'] === false) {
               this.error = response['message'] as string;

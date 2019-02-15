@@ -1,0 +1,4 @@
+.necessarily::after {
+    color: red;
+    content: '*'
+}

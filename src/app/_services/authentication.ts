@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, from } from 'rxjs';
 import { User } from '../_models/user';
-import { map } from 'rxjs/operators';
+import {ObjectEx} from '../utils/object-ex';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
@@ -38,7 +38,7 @@ export class AuthenticationService {
                         response = JSON.parse(JSON.stringify(response.body));
 
                         if (response['result'] === true) {
-                            this.loginSuccess(response['uuid']);
+                            this.loginSuccess(response);
                         }
 
                         resolve(response);
@@ -56,7 +56,7 @@ export class AuthenticationService {
 
         uuid = uuid == null ? localStorage.getItem(this.TOKEN) : uuid;
 
-        console.log(sessionStorage.getItem(this.TOKEN), localStorage.getItem(this.TOKEN));
+        // console.log(sessionStorage.getItem(this.TOKEN), localStorage.getItem(this.TOKEN));
 
         if (uuid != null) {
             this.login('', '', uuid);
@@ -69,23 +69,22 @@ export class AuthenticationService {
         this.currentUserSubject.next(this.currentUserValue);
     }
 
-    registration(email: string, password: string) {
+    registration(data: object) {
+        const respData = ObjectEx.createObject(data, ['confirmPassword']);
+
         const prm = new Promise((resolve, reject) => {
             this.http.get(this.BASE_URL + 'auth', {
-                params: {
-                    email: email,
-                    password: password
-                    },
+                params: respData,
                     observe: 'response'
             }).
             toPromise().then (response => {
                 if (response.status === 200) {
                     response = JSON.parse(JSON.stringify(response.body));
 
-                    console.log(response);
+                    // console.log(response);
 
                     if (response['result'] === true) {
-                        this.loginSuccess(response['uuid']);
+                        this.loginSuccess(response);
                     }
 
                     resolve(response);
@@ -134,14 +133,20 @@ export class AuthenticationService {
         return prm;
     }
 
-    private loginSuccess(uuid: string) {
+    private loginSuccess(response: any) {
+        this.currentUserValue.pareseFromJson(response);
+
+        console.log('response', response);
+        console.log('this.currentUserValue', this.currentUserValue);
+
+
         if (this.isRememberMe) {
-            localStorage.setItem(this.TOKEN, uuid);
+            localStorage.setItem(this.TOKEN, this.currentUserValue.uuid);
         }
 
-        sessionStorage.setItem(this.TOKEN, uuid);
+        sessionStorage.setItem(this.TOKEN, this.currentUserValue.uuid);
 
-        this.currentUserValue.uuid = uuid;
+        this.currentUserValue.uuid = this.currentUserValue.uuid;
 
         this.currentUserSubject.next(this.currentUserValue.uuid !== '' ? this.currentUserValue : null);
     }
