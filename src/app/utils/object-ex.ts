@@ -6,7 +6,7 @@ export module ObjectEx {
             const result = {};
 
             for (const key in value) {
-                if (slice && slice.indexOf(key) !== -1) {
+                if ((slice && slice.indexOf(key) !== -1) || value[key] === 'null') {
                     continue;
                 }
 
@@ -19,12 +19,13 @@ export module ObjectEx {
                 result[key] = value[key];
             }
 
+            if (Object.keys(result).length === 0) {
+                return null;
+            }
+
             return result;
         }
 
         return null;
     }
 }
-
-// export class ObjectEx {
-// }

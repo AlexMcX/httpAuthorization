@@ -22,33 +22,37 @@ export class AuthenticationService {
         return this.currentUserSubject.value;
     }
 
-    login(email: string, password: string, uuid?: string) {
-        const prm = new Promise((resolve, reject) => {
-            this.http.get(this.BASE_URL + 'login', {
-                params: {
-                email: email,
-                password: password,
-                uuid: uuid == null ? '' : uuid
-                },
-                observe: 'response'
-            })
-            .toPromise()
-            .then(response => {
-                    if (response.status === 200) {
-                        response = JSON.parse(JSON.stringify(response.body));
+    login(data: object) {
+        const respData = ObjectEx.createObject(data);
+        console.log('login:', respData);
+        if (respData) {
+            const prm = new Promise((resolve, reject) => {
+                this.http.get(this.BASE_URL + 'login', {
+                    params: respData,
+                    observe: 'response'
+                })
+                .toPromise()
+                .then(response => {
+                        if (response.status === 200) {
+                            response = JSON.parse(JSON.stringify(response.body));
 
-                        if (response['result'] === true) {
-                            this.loginSuccess(response);
+                            if (response['result'] === true) {
+                                this.loginSuccess(response);
+                            }
+
+                            resolve(response);
                         }
-
-                        resolve(response);
-                    }
-            }, rejected => {
-                reject(rejected);
+                }, rejected => {
+                    reject(rejected);
+                });
             });
-        });
 
-        return prm;
+            return prm;
+        }
+
+        console.log('Don\'t create promise to login, because request data is null');
+
+        return null;
     }
 
     init() {
@@ -59,7 +63,7 @@ export class AuthenticationService {
         // console.log(sessionStorage.getItem(this.TOKEN), localStorage.getItem(this.TOKEN));
 
         if (uuid != null) {
-            this.login('', '', uuid);
+            this.login({'uuid': uuid});
         }
 
         uuid = uuid == null ? '' : uuid;
@@ -71,30 +75,40 @@ export class AuthenticationService {
 
     registration(data: object) {
         const respData = ObjectEx.createObject(data, ['confirmPassword']);
-
-        const prm = new Promise((resolve, reject) => {
-            this.http.get(this.BASE_URL + 'auth', {
-                params: respData,
-                    observe: 'response'
-            }).
-            toPromise().then (response => {
-                if (response.status === 200) {
-                    response = JSON.parse(JSON.stringify(response.body));
-
-                    // console.log(response);
-
-                    if (response['result'] === true) {
-                        this.loginSuccess(response);
-                    }
-
-                    resolve(response);
+        console.log('registration:', respData);
+        if (respData) {
+            const prm = new Promise((resolve, reject) => {
+                if (!respData) {
+                    reject(null);
                 }
-            }, rejected => {
-                reject(rejected);
-            });
-        });
 
-        return prm;
+                this.http.get(this.BASE_URL + 'auth', {
+                    params: respData,
+                        observe: 'response'
+                }).
+                toPromise().then (response => {
+                    if (response.status === 200) {
+                        response = JSON.parse(JSON.stringify(response.body));
+
+                        // console.log(response);
+
+                        if (response['result'] === true) {
+                            this.loginSuccess(response);
+                        }
+
+                        resolve(response);
+                    }
+                }, rejected => {
+                    reject(rejected);
+                });
+            });
+
+            return prm;
+        }
+
+        console.log('Don\'t create promise to registartion, because request data is null');
+
+        return null;
     }
 
     logout() {

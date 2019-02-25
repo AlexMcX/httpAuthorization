@@ -28,9 +28,6 @@ export class LoginComponent implements OnInit {
             email: ['', Validators.required],
             password: ['', Validators.required]
         });
-
-        // get return url from route parameters or default to '/'
-        // this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     }
 
     // convenience getter for easy access to form fields
@@ -48,16 +45,24 @@ export class LoginComponent implements OnInit {
 
         this.error = '';
 
-        this.authenticationService.login(this.f.email.value, this.f.password.value).then(
-            response => {
-                if (response['result'] === false) {
-                    this.error = response['message'] as string;
-                } else {
-                    this.router.navigate(['/home']);
-                }
+        const prm = this.authenticationService.login(this.f);
 
-                this.loading = false;
-            });
+        if (prm) {
+            prm.then(
+                response => {
+                    if (response['result'] === false) {
+                        this.error = response['message'] as string;
+                    } else {
+                        this.router.navigate(['/home']);
+                    }
+
+                    this.loading = false;
+                    this.submitted = false;
+                });
+        } else {
+            this.loading = false;
+            this.submitted = false;
+        }
     }
 
     onRegister() {

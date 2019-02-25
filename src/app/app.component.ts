@@ -1,7 +1,6 @@
-import { Component, Output } from '@angular/core';
+import { Component, Output, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from './_services/authentication';
-import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
