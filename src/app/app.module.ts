@@ -3,10 +3,9 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HomeComponent } from './home/home.component';
-import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { LoginModule } from './login/login.module';
-import { SettingsModule } from './settings/settings.module';
+import { HomeComponent } from './route/home/home.component';
+import { PageNotFoundComponent } from './route/page-not-found/page-not-found.component';
+import { LoginModule } from './route/login/login.module';
 
 @NgModule({
   declarations: [
