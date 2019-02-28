@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, from } from 'rxjs';
-import { User } from '../_models/user';
+import { User } from '../models/user';
 import {ObjectEx} from '../utils/object-ex';
 
 @Injectable({ providedIn: 'root' })
@@ -24,6 +24,7 @@ export class AuthenticationService {
 
     login(data: object) {
         const respData = ObjectEx.createObject(data);
+
         console.log('login:', respData);
         if (respData) {
             const prm = new Promise((resolve, reject) => {
@@ -60,8 +61,6 @@ export class AuthenticationService {
 
         uuid = uuid == null ? localStorage.getItem(this.TOKEN) : uuid;
 
-        // console.log(sessionStorage.getItem(this.TOKEN), localStorage.getItem(this.TOKEN));
-
         if (uuid != null) {
             this.login({'uuid': uuid});
         }
@@ -89,8 +88,6 @@ export class AuthenticationService {
                 toPromise().then (response => {
                     if (response.status === 200) {
                         response = JSON.parse(JSON.stringify(response.body));
-
-                        // console.log(response);
 
                         if (response['result'] === true) {
                             this.loginSuccess(response);
@@ -150,9 +147,7 @@ export class AuthenticationService {
     private loginSuccess(response: any) {
         this.currentUserValue.pareseFromJson(response);
 
-        console.log('response', response);
-        console.log('this.currentUserValue', this.currentUserValue);
-
+        console.log('response login: ', response);
 
         if (this.isRememberMe) {
             localStorage.setItem(this.TOKEN, this.currentUserValue.uuid);

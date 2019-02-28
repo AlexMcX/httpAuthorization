@@ -1,6 +1,6 @@
 import { Component, Output, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthenticationService } from './_services/authentication';
+import { AuthenticationService } from './services/authentication';
 
 @Component({
   selector: 'app-root',

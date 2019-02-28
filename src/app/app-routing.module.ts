@@ -9,6 +9,7 @@ const routes: Routes = [
   { path: 'home', component: HomeComponent},
   { path: 'login', component: LoginComponent},
   { path: 'reg', component: RegistrationComponent},
+  { path: 'settings', loadChildren: './settings/settings.module#SettingsModule'},
   { path: '', redirectTo: '/home', pathMatch: 'full'},
   { path: '**', component: PageNotFoundComponent}
 ];
