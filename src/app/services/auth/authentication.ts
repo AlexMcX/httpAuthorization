@@ -1,21 +1,18 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, from } from 'rxjs';
-import { User } from '../models/user';
-import {ObjectEx} from '../utils/object-ex';
+import { User } from '../../models/user';
+import {ObjectEx} from '../../utils/object-ex';
+import {Conts} from '../../const/const';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
     private TOKEN = 'token';
-    private BASE_URL = 'http://localhost:4201/';
-
     private currentUserSubject: BehaviorSubject<User>;
     public currentUser: Observable<User>;
     public isRememberMe = false;
 
     constructor(private http: HttpClient) {
-        // this.currentUserSubject = new BehaviorSubject<User>(localStorage.getItem('token')));
-        // this.currentUser = this.currentUserSubject.asObservable();
     }
 
     public get currentUserValue(): User {
@@ -28,7 +25,7 @@ export class AuthenticationService {
         console.log('login:', respData);
         if (respData) {
             const prm = new Promise((resolve, reject) => {
-                this.http.get(this.BASE_URL + 'login', {
+                this.http.get(Conts.Path.SERVER_PATH + 'login', {
                     params: respData,
                     observe: 'response'
                 })
@@ -81,7 +78,7 @@ export class AuthenticationService {
                     reject(null);
                 }
 
-                this.http.get(this.BASE_URL + 'auth', {
+                this.http.get(Conts.Path.SERVER_PATH + 'auth', {
                     params: respData,
                         observe: 'response'
                 }).
@@ -114,7 +111,7 @@ export class AuthenticationService {
         }
 
         const prm = new Promise((resolve, reject) => {
-            this.http.get(this.BASE_URL + 'logout', {
+            this.http.get(Conts.Path.SERVER_PATH + 'logout', {
                 params: {
                     uuid: this.currentUserValue.uuid
                     },

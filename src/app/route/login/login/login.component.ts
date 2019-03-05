@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthenticationService } from 'src/app/services/authentication';
+import { AuthenticationService } from 'src/app/services/auth/authentication';
 
 @Component({templateUrl: 'login.component.html'})
 export class LoginComponent implements OnInit {

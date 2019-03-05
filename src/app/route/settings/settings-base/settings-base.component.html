@@ -1,3 +1,11 @@
-<p>
-  settings-base works!
-</p>
+  <div>
+    <div *ngIf="params">
+      <div *ngFor="let key of keys()">
+        <div class="form-group">
+          <label for={{key}}>{{key}}</label>
+          <input class="form-control" placeholder={{params[key]}} name={{key}} [(ngModel)]="changes[key]">         
+        </div>      
+      </div>
+    </div>
+    <button type="button" class="btn btn-primary" (click)="save()">Save</button>
+  </div>
